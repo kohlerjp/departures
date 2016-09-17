@@ -5,7 +5,8 @@ defmodule Departures do
   # for more information on OTP Applications
   def start(_type, _args) do
     import Supervisor.Spec
-
+    :ets.new(:latest, [:named_table, :public]) # Create global Cache
+    :ets.insert(:latest, {:schedule, []}) # initialize
     # Define workers and child supervisors to be supervised
     children = [
       # Start the Ecto repository

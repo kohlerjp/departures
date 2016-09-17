@@ -37,7 +37,7 @@ config :phoenix, :stacktrace_depth, 20
 config :departures, Departures.Repo,
   adapter: Ecto.Adapters.MySQL,
   username: "root",
-  password: "",
+  password: "Msdf.sdfkln",
   database: "departures_dev",
   hostname: "localhost",
   pool_size: 10

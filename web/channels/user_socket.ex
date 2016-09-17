@@ -2,7 +2,7 @@ defmodule Departures.UserSocket do
   use Phoenix.Socket
 
   ## Channels
-  # channel "room:*", Departures.RoomChannel
+  channel "depart", Departures.DepartChannel
 
   ## Transports
   transport :websocket, Phoenix.Transports.WebSocket

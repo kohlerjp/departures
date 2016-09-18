@@ -44,13 +44,13 @@ class TrainDepartures extends React.Component {
   }
   render() {
     return (
-      <table className="table table-hover table-striped text-center">
+      <table className="table table-hover text-center">
         <thead>
            <tr>
             <th className="text-center">Origin</th>
             <th className="text-center">Destination</th>
             <th className="text-center">Scheduled</th>
-            <th className="text-center">On Time</th>
+            <th className="text-center">Late</th>
             <th className="text-center">Status</th>
             <th className="text-center">Track</th>
             <th className="text-center">Trip</th>
@@ -59,6 +59,7 @@ class TrainDepartures extends React.Component {
         <tbody>
           {this.state.departures.map(d => 
             <TrainDeparture 
+            key={d.trip}
             trip={d.trip}
             track={d.track}
             status={d.status}
@@ -81,13 +82,47 @@ class TrainDeparture extends React.Component {
       return track
     }
   }
+  formatLateness(lateness){
+    if (lateness <= 0) {
+      return "-"
+    }
+    else {
+      return lateness + " Minutes Late"
+    }
+  }
+  formatRow(status) {
+    if (status == "Cancelled" || status == "Late") {
+      return "danger"
+    } else if (status == "Now Boarding" || status == "All Aboard" || status == "Arriving") {
+      return "success"
+    } else if (status == "Delayed" || status == "Late" || status == "Hold") {
+      return "warning"
+    } else {
+      return ""
+    }
+  }
+  formatTime(time) {
+    var d = new Date(parseInt(time) * 1000)
+    var h = d.getHours()
+    var hh = h
+    var mm = String(d.getMinutes())
+    var dd = "AM"
+    if (h > 12) {
+      hh = h - 12
+      dd = "PM" 
+    }
+    if (mm == "0") {
+      mm = "00"
+    }
+    return hh + ":" + mm + " " + dd
+  } 
   render(){
     return (
-      <tr>
+      <tr className={this.formatRow(this.props.status)}>
         <td>{this.props.origin}</td>
         <td>{this.props.dest}</td>
-        <td>{this.props.scheduled}</td>
-        <td>{this.props.lateness}</td>
+        <td>{this.formatTime(this.props.scheduled)}</td>
+        <td>{this.formatLateness(this.props.lateness)}</td>
         <td>{this.props.status}</td>
         <td>{this.formatTrack(this.props.track)}</td>
         <td>{this.props.trip}</td>

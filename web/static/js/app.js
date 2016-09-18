@@ -26,14 +26,13 @@ import ReactDOM from "react-dom"
 class TrainDepartures extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {departures: []};
+    this.state = {departures: [], origin: 0};
   }
   componentDidMount() {
     socket.connect()
     let channel = socket.channel("depart", {})
 
     channel.on("update", payload => {
-      console.log(payload)
       this.setState({departures: payload["schedule"]})
 
     })
@@ -42,34 +41,81 @@ class TrainDepartures extends React.Component {
       .receive("ok", resp => { this.setState({departures: resp["schedule"]}) })
       .receive("error", resp => { console.log("Unable to join", resp) })      
   }
+
+  handleRadioChange(event) {
+    this.setState({origin: event.target.value})
+  }
+
+  filterByOrigin(trains) {
+    console.log(trains)
+    if (this.state.origin == 1) {
+      return trains.filter(t => t.origin == "North Station")
+    } else if (this.state.origin == 2) {
+      return trains.filter(t => t.origin == "South Station")
+    }
+      return trains
+  }
+
+  renderInput(){
+    return (<div>
+      <div className="radio">
+        <label>
+          <input type="radio" name="originRadio" id="originRadioBoth" value={0} 
+                 onChange={this.handleRadioChange.bind(this)} checked={0 == this.state.origin} />
+          All Stations
+        </label>
+      </div>
+
+      <div className="radio">
+        <label>
+          <input type="radio" name="originRadio" id="originRadioNorth" value={1} 
+                 onChange={this.handleRadioChange.bind(this)} checked={1 == this.state.origin} />
+          North Station
+        </label>
+      </div>
+
+      <div className="radio">
+        <label>
+          <input type="radio" name="originRadio" id="originRadioSouth" value={2} 
+                 onChange={this.handleRadioChange.bind(this)} checked={2 == this.state.origin} />
+          South Stations
+        </label>
+      </div>
+    </div>)
+  }
+
   render() {
+    var displayTrains = this.filterByOrigin(this.state.departures)
     return (
-      <table className="table table-hover text-center">
-        <thead>
-           <tr>
-            <th className="text-center">Origin</th>
-            <th className="text-center">Destination</th>
-            <th className="text-center">Scheduled</th>
-            <th className="text-center">Late</th>
-            <th className="text-center">Status</th>
-            <th className="text-center">Track</th>
-            <th className="text-center">Trip</th>
-      </tr>
-        </thead>
-        <tbody>
-          {this.state.departures.map(d => 
-            <TrainDeparture 
-            key={d.trip}
-            trip={d.trip}
-            track={d.track}
-            status={d.status}
-            scheduled={d.scheduled}
-            origin={d.origin} 
-            lateness={d.lateness}
-            dest={d.dest}/>)}     
-        </tbody>
-      </table>
-      )
+      <div>
+        {this.renderInput()}
+        <table className="table table-hover text-center">
+          <thead>
+             <tr>
+              <th className="text-center">Origin</th>
+              <th className="text-center">Destination</th>
+              <th className="text-center">Scheduled</th>
+              <th className="text-center">Late</th>
+              <th className="text-center">Status</th>
+              <th className="text-center">Track</th>
+              <th className="text-center">Trip</th>
+        </tr>
+          </thead>
+          <tbody>
+            {displayTrains.map(d => 
+              <TrainDeparture 
+              key={d.trip}
+              trip={d.trip}
+              track={d.track}
+              status={d.status}
+              scheduled={d.scheduled}
+              origin={d.origin} 
+              lateness={d.lateness}
+              dest={d.dest}/>)}     
+          </tbody>
+        </table>
+      </div>
+    )
   }
 }
 
@@ -112,6 +158,7 @@ class TrainDeparture extends React.Component {
       dd = "PM" 
     }
     if (mm == "0") {
+  
       mm = "00"
     }
     return hh + ":" + mm + " " + dd

@@ -19,7 +19,7 @@ defmodule Departures.Mixfile do
   def application do
     [mod: {Departures, []},
      applications: [:phoenix, :phoenix_pubsub, :phoenix_html, :cowboy, :logger, :gettext,
-                    :phoenix_ecto, :mariaex, :quantum, :httpoison]]
+                    :phoenix_ecto, :mariaex, :quantum, :httpoison, :postgrex]]
   end
 
   # Specifies which paths to compile per environment.
@@ -37,6 +37,7 @@ defmodule Departures.Mixfile do
      {:phoenix_html, "~> 2.6"},
      {:phoenix_live_reload, "~> 1.0", only: :dev},
      {:gettext, "~> 0.11"},
+     {:postgrex, ">= 0.0.0"},
      {:quantum, ">= 1.7.1"},
      {:ex_csv, "~> 0.1.5"},
      {:httpoison, "~> 0.9.0"},

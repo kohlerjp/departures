@@ -23,20 +23,25 @@ import socket from "./socket"
 import React from "react"
 import ReactDOM from "react-dom"
 
+// TODO: Separate React Components should be 
+// in separate files
+
 class TrainDepartures extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {departures: [], origin: 0};
+    this.state = {departures: [], origin: "All Stations"};
   }
+ 
   componentDidMount() {
     socket.connect()
     let channel = socket.channel("depart", {})
 
+    // Respond to schedule update
     channel.on("update", payload => {
       this.setState({departures: payload["schedule"]})
-
     })
 
+    // Join the channel
     channel.join()
       .receive("ok", resp => { this.setState({departures: resp["schedule"]}) })
       .receive("error", resp => { console.log("Unable to join", resp) })      
@@ -47,40 +52,32 @@ class TrainDepartures extends React.Component {
   }
 
   filterByOrigin(trains) {
-    console.log(trains)
-    if (this.state.origin == 1) {
-      return trains.filter(t => t.origin == "North Station")
-    } else if (this.state.origin == 2) {
-      return trains.filter(t => t.origin == "South Station")
-    }
-      return trains
+    if (this.state.origin != "All Stations" ) {
+      return trains.filter(t => t.origin == this.state.origin)
+    } 
+    return trains
   }
 
   renderInput(){
-    return (<div>
-      <div className="radio">
-        <label>
-          <input type="radio" name="originRadio" id="originRadioBoth" value={0} 
-                 onChange={this.handleRadioChange.bind(this)} checked={0 == this.state.origin} />
-          All Stations
-        </label>
-      </div>
+    return (
+    <div>
+      <label className="radio-inline">
+        <input type="radio" name="originRadio" id="originRadioBoth" value={"All Stations"} 
+               onChange={this.handleRadioChange.bind(this)} checked={"All Stations" == this.state.origin} />
+        All Stations
+      </label>
 
-      <div className="radio">
-        <label>
-          <input type="radio" name="originRadio" id="originRadioNorth" value={1} 
-                 onChange={this.handleRadioChange.bind(this)} checked={1 == this.state.origin} />
-          North Station
-        </label>
-      </div>
+      <label className="radio-inline">
+        <input type="radio" name="originRadio" id="originRadioNorth" value={"North Station"} 
+               onChange={this.handleRadioChange.bind(this)} checked={"North Station" == this.state.origin} />
+        North Station
+      </label>
 
-      <div className="radio">
-        <label>
-          <input type="radio" name="originRadio" id="originRadioSouth" value={2} 
-                 onChange={this.handleRadioChange.bind(this)} checked={2 == this.state.origin} />
-          South Stations
-        </label>
-      </div>
+      <label className="radio-inline">
+        <input type="radio" name="originRadio" id="originRadioSouth" value={"South Station"} 
+               onChange={this.handleRadioChange.bind(this)} checked={"South Station" == this.state.origin} />
+        South Station
+      </label>
     </div>)
   }
 

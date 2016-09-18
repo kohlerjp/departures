@@ -6,7 +6,8 @@ defmodule Departures.UserSocket do
 
   ## Transports
   transport :websocket, Phoenix.Transports.WebSocket,
-    timeout: 45_000
+    timeout: 45_000,
+    check_origin: ["https://whispering-sea-86580.herokuapp.com/"]
   # transport :longpoll, Phoenix.Transports.LongPoll
 
   # Socket params are passed from the client and can

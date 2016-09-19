@@ -1,5 +1,6 @@
 # Departures
 
+* The server shuts down after not being used for an hour. It may take a minute to load after accessing the page
 * Departure schedule located at: [https://whispering-sea-86580.herokuapp.com/](https://whispering-sea-86580.herokuapp.com/)
 * Application is written in Elixir using Phoenix and ReactJs.
 * Schedule updates automatically every minute.
